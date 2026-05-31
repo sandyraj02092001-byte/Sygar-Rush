@@ -1,0 +1,419 @@
+/* ============================================
+   SUGAR RUSH — CSS
+   Aesthetic: Neon candy-shop maximalism
+   Dark purple base + vibrant candy accents
+   ============================================ */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+:root {
+  --bg:          #1a0a2e;
+  --bg2:         #2b0f4e;
+  --surface:     #3a1568;
+  --border:      #6b3fa0;
+  --candy1:      #ff4d6d;  /* cherry */
+  --candy2:      #ff9f1c;  /* orange */
+  --candy3:      #a8dadc;  /* mint */
+  --candy4:      #f72585;  /* pink */
+  --candy5:      #4cc9f0;  /* sky */
+  --gold:        #ffd700;
+  --white:       #fff;
+  --text-muted:  #b084e0;
+  --radius-tile: 14px;
+  --tile-size:   min(10.5vw, 62px);
+  --gap:         min(1.4vw, 7px);
+  --font-head:   'Fredoka One', cursive;
+  --font-body:   'Nunito', sans-serif;
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  background: var(--bg);
+  font-family: var(--font-body);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100dvh;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ── Ambient background orbs ── */
+.bg-orb {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.35;
+  pointer-events: none;
+  z-index: 0;
+  animation: orb-drift 12s ease-in-out infinite alternate;
+}
+.orb1 { width: 340px; height: 340px; background: #7b2ff7; top: -80px; left: -80px; animation-delay: 0s; }
+.orb2 { width: 280px; height: 280px; background: #f72585; bottom: -60px; right: -60px; animation-delay: -4s; }
+.orb3 { width: 220px; height: 220px; background: #4cc9f0; top: 40%; left: 60%; animation-delay: -8s; }
+
+@keyframes orb-drift {
+  from { transform: translate(0, 0) scale(1); }
+  to   { transform: translate(30px, 40px) scale(1.1); }
+}
+
+/* ── Layout ── */
+.game-wrapper {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 520px;
+  padding: 16px 12px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  min-height: 100dvh;
+}
+
+/* ── HUD ── */
+.hud {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.hud-card {
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: 16px;
+  padding: 8px 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 78px;
+  box-shadow: 0 0 18px rgba(107, 63, 160, 0.5);
+}
+
+.hud-label {
+  font-family: var(--font-body);
+  font-weight: 800;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.hud-value {
+  font-family: var(--font-head);
+  font-size: 26px;
+  color: var(--white);
+  line-height: 1.1;
+  transition: transform 0.15s, color 0.15s;
+}
+
+.hud-value.pop {
+  transform: scale(1.35);
+  color: var(--gold);
+}
+
+.moves-card .hud-value { color: #4cc9f0; }
+.moves-card .hud-value.danger { color: var(--candy1); animation: pulse-danger 0.5s ease infinite alternate; }
+
+@keyframes pulse-danger {
+  from { transform: scale(1);    opacity: 1; }
+  to   { transform: scale(1.12); opacity: 0.75; }
+}
+
+.hud-title {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+
+.title-text {
+  font-family: var(--font-head);
+  font-size: 22px;
+  color: var(--white);
+  line-height: 1;
+  text-align: center;
+  text-shadow: 0 0 12px rgba(247, 37, 133, 0.7);
+}
+
+.title-candy {
+  font-size: 22px;
+  filter: drop-shadow(0 0 6px rgba(255, 77, 109, 0.9));
+  animation: spin-candy 6s linear infinite;
+}
+
+@keyframes spin-candy {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* ── Board ── */
+.board-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(8, var(--tile-size));
+  grid-template-rows: repeat(8, var(--tile-size));
+  gap: var(--gap);
+  background: var(--bg2);
+  border: 3px solid var(--border);
+  border-radius: 20px;
+  padding: var(--gap);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.06) inset,
+    0 8px 40px rgba(0,0,0,0.6),
+    0 0 60px rgba(107, 63, 160, 0.25);
+  touch-action: none;
+  user-select: none;
+}
+
+/* ── Tiles ── */
+.tile {
+  width: var(--tile-size);
+  height: var(--tile-size);
+  border-radius: var(--radius-tile);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(var(--tile-size) * 0.55);
+  cursor: pointer;
+  position: relative;
+  transition:
+    transform 0.14s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.14s ease;
+  background: var(--surface);
+  border: 2px solid rgba(255,255,255,0.08);
+  box-shadow: 0 3px 8px rgba(0,0,0,0.4), 0 1px 0 rgba(255,255,255,0.1) inset;
+  will-change: transform;
+  /* Line-height fix so emoji centres perfectly */
+  line-height: 1;
+  overflow: hidden;
+}
+
+/* Shimmer overlay for tiles */
+.tile::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+/* Per-candy colour tints */
+.tile[data-type="0"] { background: linear-gradient(145deg, #4a1530, #6b1e43); border-color: rgba(255,77,109,0.4); }
+.tile[data-type="1"] { background: linear-gradient(145deg, #3d2200, #5c3500); border-color: rgba(255,159,28,0.4); }
+.tile[data-type="2"] { background: linear-gradient(145deg, #0d3535, #154848); border-color: rgba(168,218,220,0.4); }
+.tile[data-type="3"] { background: linear-gradient(145deg, #3d002a, #600040); border-color: rgba(247,37,133,0.4); }
+.tile[data-type="4"] { background: linear-gradient(145deg, #002b3d, #004060); border-color: rgba(76,201,240,0.4); }
+
+.tile:active { transform: scale(0.88); }
+
+.tile.selected {
+  transform: scale(1.12);
+  box-shadow:
+    0 0 0 3px var(--gold),
+    0 0 18px rgba(255, 215, 0, 0.6),
+    0 4px 12px rgba(0,0,0,0.5);
+  z-index: 10;
+}
+
+/* Match flash — highlight then fade out */
+.tile.matched {
+  animation: match-flash 0.36s ease forwards;
+}
+
+@keyframes match-flash {
+  0%   { transform: scale(1);    opacity: 1; filter: brightness(1); }
+  35%  { transform: scale(1.28); opacity: 1; filter: brightness(2.2); }
+  100% { transform: scale(0);    opacity: 0; filter: brightness(2.2); }
+}
+
+/* Fall-in for new pieces */
+.tile.fall-in {
+  animation: fall-in 0.35s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes fall-in {
+  from { transform: translateY(-60px) scale(0.6); opacity: 0; }
+  to   { transform: translateY(0)     scale(1);   opacity: 1; }
+}
+
+/* Invalid swap shake */
+.tile.shake {
+  animation: shake 0.32s ease;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%       { transform: translateX(-6px); }
+  50%       { transform: translateX(6px); }
+  75%       { transform: translateX(-4px); }
+}
+
+/* ── Combo burst ── */
+.combo-burst {
+  position: fixed;
+  top: 48%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-head);
+  font-size: 48px;
+  color: var(--gold);
+  text-shadow: 0 0 20px rgba(255,215,0,0.9), 0 2px 0 rgba(0,0,0,0.6);
+  pointer-events: none;
+  opacity: 0;
+  z-index: 100;
+  white-space: nowrap;
+}
+
+.combo-burst.show {
+  animation: burst 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes burst {
+  0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.4); }
+  30%  { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+  70%  { opacity: 1; transform: translate(-50%, -60%) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -75%) scale(0.85); }
+}
+
+/* ── Modal ── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 4, 20, 0.82);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.modal-overlay.visible {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.modal {
+  background: linear-gradient(160deg, var(--surface), var(--bg2));
+  border: 2px solid var(--border);
+  border-radius: 28px;
+  padding: 36px 32px;
+  text-align: center;
+  max-width: 300px;
+  width: 88%;
+  box-shadow: 0 0 60px rgba(107,63,160,0.6), 0 24px 60px rgba(0,0,0,0.5);
+  transform: scale(0.85);
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.modal-overlay.visible .modal {
+  transform: scale(1);
+}
+
+.modal-emoji {
+  font-size: 56px;
+  margin-bottom: 10px;
+  display: block;
+  filter: drop-shadow(0 0 12px rgba(255,77,109,0.8));
+  animation: sway 2s ease-in-out infinite;
+}
+
+@keyframes sway {
+  0%, 100% { transform: rotate(-8deg); }
+  50%       { transform: rotate(8deg); }
+}
+
+.modal-title {
+  font-family: var(--font-head);
+  font-size: 30px;
+  color: var(--white);
+  margin-bottom: 4px;
+}
+
+.modal-sub {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+.modal-score-box {
+  background: rgba(0,0,0,0.35);
+  border: 2px solid var(--border);
+  border-radius: 14px;
+  padding: 12px 20px;
+  margin-bottom: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.modal-score-label {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.modal-score-value {
+  font-family: var(--font-head);
+  font-size: 44px;
+  color: var(--gold);
+  text-shadow: 0 0 14px rgba(255,215,0,0.6);
+  line-height: 1;
+}
+
+.play-again-btn {
+  display: block;
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #f72585, #7b2ff7);
+  color: var(--white);
+  font-family: var(--font-head);
+  font-size: 20px;
+  cursor: pointer;
+  box-shadow: 0 6px 24px rgba(247,37,133,0.45);
+  transition: transform 0.14s ease, box-shadow 0.14s ease;
+}
+
+.play-again-btn:active {
+  transform: scale(0.96);
+  box-shadow: 0 2px 12px rgba(247,37,133,0.3);
+}
+
+/* ── Responsive tweaks ── */
+@media (max-height: 720px) {
+  :root { --tile-size: min(10vw, 56px); --gap: min(1.2vw, 6px); }
+  .game-wrapper { gap: 10px; padding-top: 10px; }
+  .hud-value { font-size: 22px; }
+}
+
+@media (max-height: 620px) {
+  :root { --tile-size: min(9.5vw, 50px); --gap: 5px; }
+  .title-candy { display: none; }
+}
